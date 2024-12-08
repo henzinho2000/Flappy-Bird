@@ -10,13 +10,35 @@ const player = {
 	width: 33,
 	height: 24,
 	x: 10,
-	y: 50,
+	y: canvas.height /2 -12,
 	weight: 0.5,
 	aceleration: 0,
 	gravity() {
 		this.aceleration += this.weight;
 		this.y += this.aceleration;
 	},
+	draw() {
+		context.drawImage(
+			sprites,
+			this.spriteX,
+			this.spriteY,
+			this.width,
+			this.height,
+			this.x,
+			this.y,
+			this.width,
+			this.height
+		);
+	},
+};
+
+const introduction = {
+	spriteY: 0,
+	spriteX: 134,
+	width: 174,
+	height: 152,
+	x: (canvas.width/2) - 87,
+	y: canvas.height/2 - 76,
 	draw() {
 		context.drawImage(
 			sprites,
@@ -99,13 +121,54 @@ const background = {
 		);
 	},
 };
+
+let activateScreen = {};
+
+function changeScreen(newScreen){
+	activateScreen = newScreen;
+}
+
+const screens = {
+	init:{
+		draw(){
+			background.draw();
+			ground.draw();
+			player.draw();
+			introduction.draw();	
+		},
+		click(){
+			changeScreen(screens.game);
+		},
+		actualize(){
+
+		}
+	}
+}
+
+screens.game = {
+	draw(){
+		background.draw();
+		ground.draw();
+		player.draw();
+	},
+	actualize(){
+		player.gravity();
+	}
+}
+
+
 function drawObjects() {
-	player.gravity();
-	background.draw();
-	ground.draw();
-	player.draw();
+	activateScreen.draw();
+	activateScreen.actualize();
 
 	requestAnimationFrame(drawObjects);
 }
 
+window.addEventListener("click",()=>{
+	if(activateScreen.click){
+		activateScreen.click();	
+	}
+})
+
+changeScreen(screens.init);
 drawObjects();
