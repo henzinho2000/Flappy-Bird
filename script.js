@@ -431,3 +431,4 @@ window.addEventListener("keydown", () => {
 
 changeScreen(screens.init);
 drawObjects();
+
