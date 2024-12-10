@@ -72,72 +72,12 @@ function colliding(obj1, obj2) {
 		return false;
 	}
 }
-function setPlayer() {
-	const player = {
-		spriteX: 0,
-		spriteY: 0,
-		width: 33,
-		height: 24,
-		x: canvas.width / 2,
-		jump: 4.6,
-		up() {
-			soundPulo.play();
-			this.aceleration = -this.jump;
-		},
-		y: canvas.height / 2 - 24,
-		weight: 0.25,
-		aceleration: 0,
-		gravity() {
-			if (colliding(player, globals.ground)) {
-				soundHit.play();
-				changeScreen(screens.init);
-				return;
-			}
-
-			this.aceleration += this.weight;
-			this.y += this.aceleration;
-		},
-		moving: [
-			{ spriteX: 0, spriteY: 0 },
-			{ spriteX: 0, spriteY: 26 },
-			{ spriteX: 0, spriteY: 52 },
-		],
-		actualFrame: 0,
-		actualizeFrame() {
-			const intervalOfTime = 8;
-			const passedInterval = frames % intervalOfTime;
-			if (passedInterval == intervalOfTime - 1) {
-				const baseIndex = 1;
-				const index = baseIndex + this.actualFrame;
-				const baseRepeat = this.moving.length;
-				this.actualFrame = index % baseRepeat;
-			}
-		},
-		draw() {
-			this.actualizeFrame();
-			this.spriteX = this.moving[this.actualFrame].spriteX;
-			this.spriteY = this.moving[this.actualFrame].spriteY;
-			context.drawImage(
-				sprites,
-				this.spriteX,
-				this.spriteY,
-				this.width,
-				this.height,
-				this.x - this.width / 2,
-				this.y,
-				this.width,
-				this.height
-			);
-		},
-	};
-	return player;
-}
 
 function setPipe() {
 	const pipe = {
 		width: 52,
 		height: 400,
-
+		
 		ground: {
 			spriteX: 0,
 			spriteY: 168,
@@ -150,9 +90,9 @@ function setPipe() {
 			this.pairs.forEach((par) => {
 				const pipeSkyX = par.x;
 				const pipeSkyY = par.y;
-
-				const pipeDistance = 90;
-
+				
+				const pipeDistance = 110;
+				
 				context.drawImage(
 					sprites,
 					this.sky.spriteX,
@@ -167,7 +107,7 @@ function setPipe() {
 
 				const pipeGroundX = par.x;
 				const pipeGroundY = this.height + pipeDistance + par.y;
-
+				
 				context.drawImage(
 					sprites,
 					this.ground.spriteX,
@@ -179,7 +119,7 @@ function setPipe() {
 					this.width,
 					this.height
 				);
-
+				
 				par.pipeSky = {
 					x: pipeSkyX,
 					y: this.height + pipeSkyY,
@@ -195,7 +135,7 @@ function setPipe() {
 			const headPlayer = globals.player.y;
 			const bodyPlayer = globals.player.x;
 			const footPlayer = globals.player.y + globals.player.height;
-
+			
 			if (globals.player.x + globals.player.width >= par.x + 18) {
 				if (headPlayer <= par.pipeSky.y) {
 					if (bodyPlayer <= par.pipeSky.x + this.width) {
@@ -278,7 +218,7 @@ function setGround() {
 			const velocityMoviment = 1;
 			const repete = this.width / 2;
 			this.x -= velocityMoviment;
-
+			
 			if (this.x == -repete) {
 				this.x = 0;
 			}
@@ -320,7 +260,7 @@ const background = {
 	draw() {
 		context.fillStyle = "#70c5ce";
 		context.fillRect(0, 0, canvas.width, canvas.height);
-
+		
 		context.drawImage(
 			sprites,
 			this.spriteX,
@@ -346,9 +286,69 @@ const background = {
 	},
 };
 
+function setPlayer() {
+	const player = {
+		spriteX: 0,
+		spriteY: 0,
+		width: 33,
+		height: 24,
+		x: canvas.width / 2,
+		jump: 6,
+		up() {
+			soundPulo.play();
+			this.aceleration = -this.jump;
+		},
+		y: canvas.height / 2 - 24,
+		weight: 0.29,
+		aceleration: 0,
+		gravity() {
+			if (colliding(player, globals.ground)) {
+				soundHit.play();
+				changeScreen(screens.init);
+				return;
+			}
+
+			this.aceleration += this.weight;
+			this.y += this.aceleration;
+		},
+		moving: [
+			{ spriteX: 0, spriteY: 0 },
+			{ spriteX: 0, spriteY: 26 },
+			{ spriteX: 0, spriteY: 52 },
+		],
+		actualFrame: 0,
+		actualizeFrame() {
+			const intervalOfTime = 8;
+			const passedInterval = frames % intervalOfTime;
+			if (passedInterval == intervalOfTime - 1) {
+				const baseIndex = 1;
+				const index = baseIndex + this.actualFrame;
+				const baseRepeat = this.moving.length;
+				this.actualFrame = index % baseRepeat;
+			}
+		},
+		draw() {
+			this.actualizeFrame();
+			this.spriteX = this.moving[this.actualFrame].spriteX;
+			this.spriteY = this.moving[this.actualFrame].spriteY;
+			context.drawImage(
+				sprites,
+				this.spriteX,
+				this.spriteY,
+				this.width,
+				this.height,
+				this.x - this.width / 2,
+				this.y,
+				this.width *1.1,
+				this.height *1.1
+			);
+		},
+	};
+	return player;
+}
 function changeScreen(newScreen) {
 	activateScreen = newScreen;
-
+	
 	if (activateScreen.initializy) {
 		activateScreen.initializy();
 	}
@@ -418,12 +418,12 @@ function drawObjects() {
 	requestAnimationFrame(drawObjects);
 }
 
-canvas.addEventListener("click", () => {
+window.addEventListener("keydown", () => {
 	if (activateScreen.click) {
 		activateScreen.click();
 	}
 });
-window.addEventListener("keydown", () => {
+canvas.addEventListener("click", () => {
 	if (activateScreen.click) {
 		activateScreen.click();
 	}
