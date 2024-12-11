@@ -1,15 +1,16 @@
-const buttonSound = document.querySelector("#sound"); 
+const buttonSound = document.querySelector("#sound");
 let sound = true;
 
-buttonSound.addEventListener("click",()=>{
-	if(sound){
+buttonSound.addEventListener("click", () => {
+	if (sound) {
 		buttonSound.className = "fa-solid fa-volume-xmark";
 		sound = false;
-	}else{
+	} else {
 		buttonSound.className = "fa-solid fa-volume-high";
 		sound = true;
 	}
-})
+});
+
 
 let activateScreen = {};
 
@@ -45,10 +46,10 @@ function setPontuation() {
 	};
 	return pontuation;
 }
-function setVersion(){
+function setVersion() {
 	const version = {
 		version: "v-1.211",
-		draw(x = 10, y = canvas.height-10, px = 20, fill = "grey") {
+		draw(x = 10, y = canvas.height - 10, px = 20, fill = "grey") {
 			context.font = `${px}px Pixelify Sans`;
 			context.textAlign = "right";
 			context.fillStyle = fill;
@@ -92,7 +93,7 @@ function setGameOver() {
 	return gameOver;
 }
 function colliding(obj1, obj2) {
-	if (obj1.y + obj1.height >= obj2.y - 3 || obj1.y <= 0) {
+	if (obj1.y + obj1.height >= obj2.y + 7 || obj1.y <= 15) {
 		return true;
 	} else {
 		return false;
@@ -163,12 +164,12 @@ function setPipe() {
 			const footPlayer = globals.player.y + globals.player.height;
 
 			if (globals.player.x + globals.player.width >= par.x + 18) {
-				if (headPlayer <= par.pipeSky.y) {
+				if (headPlayer <= par.pipeSky.y + 14) {
 					if (bodyPlayer <= par.pipeSky.x + this.width) {
 						return true;
 					}
 				}
-				if (footPlayer >= par.pipeGround.y) {
+				if (footPlayer >= par.pipeGround.y + 10) {
 					if (bodyPlayer <= par.pipeGround.x + this.width) {
 						return true;
 					}
@@ -202,9 +203,10 @@ function setPipe() {
 				}
 				if (par.x - globals.player.x <= 0) {
 					if (par.point == false) {
-						if(sound){
+						if (sound) {
 							soundPoint.play();
-						}globals.pontuation.points++;
+						}
+						globals.pontuation.points++;
 						par.point = true;
 					}
 				}
@@ -324,7 +326,7 @@ function setPlayer() {
 		x: canvas.width / 2,
 		jump: 6,
 		up() {
-			if(sound){
+			if (sound) {
 				soundPulo.play();
 			}
 			this.aceleration = -this.jump;
@@ -332,9 +334,10 @@ function setPlayer() {
 		y: canvas.height / 2 - 24,
 		weight: 0.28,
 		aceleration: 0,
+		rotation: 0,
 		gravity() {
 			if (colliding(player, globals.ground)) {
-				if(sound){
+				if (sound) {
 					soundHit.play();
 				}
 				changeScreen(screens.gameOver);
@@ -343,6 +346,15 @@ function setPlayer() {
 
 			this.aceleration += this.weight;
 			this.y += this.aceleration;
+
+			// Ajusta a rotação com base na aceleração
+			if (this.aceleration < 0) {
+				// Subindo: rotaciona para cima
+				this.rotation = Math.max(this.rotation - 0.02, -Math.PI / 5); // Limite de -45 graus
+			} else {
+				// Caindo: rotaciona para baixo
+				this.rotation = Math.min(this.rotation + 0.02, Math.PI); // Limite de 45 graus
+			}
 		},
 		moving: [
 			{ spriteX: 0, spriteY: 0 },
@@ -364,17 +376,22 @@ function setPlayer() {
 			this.actualizeFrame();
 			this.spriteX = this.moving[this.actualFrame].spriteX;
 			this.spriteY = this.moving[this.actualFrame].spriteY;
+
+			context.save(); // Salva o estado atual do canvas
+			context.translate(this.x, this.y); // Move o ponto de rotação para o centro do sprite
+			context.rotate(this.rotation); // Aplica a rotação
 			context.drawImage(
 				sprites,
 				this.spriteX,
 				this.spriteY,
 				this.width,
 				this.height,
-				this.x - this.width / 2,
-				this.y,
+				-this.width / 2, // Ajusta para o centro do sprite
+				-this.height / 2,
 				this.width * 1.1,
 				this.height * 1.1
 			);
+			context.restore(); // Restaura o estado do canvas
 		},
 	};
 	return player;
@@ -421,7 +438,7 @@ screens.game = {
 		globals.ground.draw();
 		globals.player.draw();
 		globals.pontuation.draw();
-		globals.version.draw()
+		globals.version.draw();
 	},
 	click() {
 		globals.player.up();
@@ -448,23 +465,23 @@ screens.gameOver = {
 };
 
 let lastFrameTime = 0; // Guarda o último tempo de quadro
-const targetFPS = 70; // FPS desejado
+const targetFPS = 80; // FPS desejado
 const frameInterval = 1000 / targetFPS; // Intervalo entre os quadros em milissegundos
 
 function drawObjects() {
-    const currentTime = performance.now(); // Tempo atual em milissegundos
-    const deltaTime = currentTime - lastFrameTime; // Diferença de tempo entre os quadros
+	const currentTime = performance.now(); // Tempo atual em milissegundos
+	const deltaTime = currentTime - lastFrameTime; // Diferença de tempo entre os quadros
 
-    if (deltaTime >= frameInterval) {
-        lastFrameTime = currentTime; // Atualiza o último tempo de quadro
+	if (deltaTime >= frameInterval) {
+		lastFrameTime = currentTime; // Atualiza o último tempo de quadro
 
-        activateScreen.draw();
-        activateScreen.actualize();
-		console.log(deltaTime);
-        frames++;
-    }
+		activateScreen.draw();
+		activateScreen.actualize();
 
-    requestAnimationFrame(drawObjects);
+		frames++;
+	}
+
+	requestAnimationFrame(drawObjects);
 }
 
 window.addEventListener("keydown", () => {
