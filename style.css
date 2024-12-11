@@ -9,7 +9,7 @@ body {
 	flex-direction: column;
 	align-items: center;
 	background-color: #212531;
-	color: white;
+	color: rgb(183, 201, 220);
 }
 canvas {
 	border: 5px solid #1c1a27;
@@ -17,12 +17,34 @@ canvas {
 	display: block;
 	margin: 0 auto;
 }
-
-#button{
-	margin-top:2vw;
+i{
 	font-size: 6vh;
 	transition: all .5s;
 }
-#button:hover{
+i:hover{
 	transform: scale(1.1);
+}
+.circle{
+	width: 3rem;
+	height: 3rem;
+	background-color: #212531;
+	border-radius: 30%;
+	border: 5px solid rgb(14, 13, 14);
+}
+.game{
+	background-color: #1c1a27;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+	height: 37rem;
+	border-radius: 20px;
+}
+
+.buttons{
+	width: 70%;
+	height: 15vh;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 }

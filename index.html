@@ -11,15 +11,28 @@
 		/>
 		<link rel="stylesheet" href="./style.css" />
 		<script src="./script.js" defer></script>
-        <script src="./theme.js" defer></script>
+		<script src="./theme.js" defer></script>
 		<link
 			href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&family=Tiny5&display=swap"
 			rel="stylesheet"
 		/>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+			integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
+			crossorigin="anonymous"
+			referrerpolicy="no-referrer"
+		/>
 	</head>
 	<body>
-		<canvas width="320" height="480"></canvas>
-        <i id="button" class="fa-solid fa-sun"></i>
+		<div class="game">
+			<canvas width="320" height="480"></canvas>
+
+			<div class="buttons">
+				<i id="theme" class="fa-solid fa-sun"></i>
+				<div class="circle"></div>
+				<i id="sound" class="fa-solid fa-volume-high"></i>
+			</div>
+		</div>
 	</body>
 </html>

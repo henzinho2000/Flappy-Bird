@@ -1,16 +1,16 @@
-const button = document.querySelector("#button");
+const buttonTheme = document.querySelector("#theme");
 const body = document.querySelector("body");
 
 let dark = true;
 
-button.addEventListener("click",()=>{
+buttonTheme.addEventListener("click",()=>{
 	if(dark){
 		body.style.backgroundColor = "wheat";
-		body.style.color = "#212531";
+		buttonTheme.className = "fa-solid fa-moon"
 		dark = false;
 	}else{
 		body.style.backgroundColor = "#212531";
-		body.style.color = "white";
+		buttonTheme.className = "fa-solid fa-sun"
 		dark = true;
 	}
 })

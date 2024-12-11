@@ -1,3 +1,16 @@
+const buttonSound = document.querySelector("#sound"); 
+let sound = true;
+
+buttonSound.addEventListener("click",()=>{
+	if(sound){
+		buttonSound.className = "fa-solid fa-volume-xmark";
+		sound = false;
+	}else{
+		buttonSound.className = "fa-solid fa-volume-high";
+		sound = true;
+	}
+})
+
 let activateScreen = {};
 
 const globals = {};
@@ -77,7 +90,7 @@ function setPipe() {
 	const pipe = {
 		width: 52,
 		height: 400,
-		
+
 		ground: {
 			spriteX: 0,
 			spriteY: 168,
@@ -90,9 +103,9 @@ function setPipe() {
 			this.pairs.forEach((par) => {
 				const pipeSkyX = par.x;
 				const pipeSkyY = par.y;
-				
+
 				const pipeDistance = 110;
-				
+
 				context.drawImage(
 					sprites,
 					this.sky.spriteX,
@@ -107,7 +120,7 @@ function setPipe() {
 
 				const pipeGroundX = par.x;
 				const pipeGroundY = this.height + pipeDistance + par.y;
-				
+
 				context.drawImage(
 					sprites,
 					this.ground.spriteX,
@@ -119,7 +132,7 @@ function setPipe() {
 					this.width,
 					this.height
 				);
-				
+
 				par.pipeSky = {
 					x: pipeSkyX,
 					y: this.height + pipeSkyY,
@@ -135,7 +148,7 @@ function setPipe() {
 			const headPlayer = globals.player.y;
 			const bodyPlayer = globals.player.x;
 			const footPlayer = globals.player.y + globals.player.height;
-			
+
 			if (globals.player.x + globals.player.width >= par.x + 18) {
 				if (headPlayer <= par.pipeSky.y) {
 					if (bodyPlayer <= par.pipeSky.x + this.width) {
@@ -165,8 +178,10 @@ function setPipe() {
 			this.pairs.forEach((par) => {
 				par.x -= 2;
 				if (this.CollidingWithPlayer(par)) {
-					soundHit.play();
-					changeScreen(screens.init);
+					if (sound) {
+						soundHit.play();
+					}
+					changeScreen(screens.gameOver);
 					return;
 				}
 				if (par.x + this.width <= 0) {
@@ -174,8 +189,9 @@ function setPipe() {
 				}
 				if (par.x - globals.player.x <= 0) {
 					if (par.point == false) {
-						soundPoint.play();
-						globals.pontuation.points++;
+						if(sound){
+							soundPoint.play();
+						}globals.pontuation.points++;
 						par.point = true;
 					}
 				}
@@ -218,7 +234,7 @@ function setGround() {
 			const velocityMoviment = 1;
 			const repete = this.width / 2;
 			this.x -= velocityMoviment;
-			
+
 			if (this.x == -repete) {
 				this.x = 0;
 			}
@@ -260,7 +276,7 @@ const background = {
 	draw() {
 		context.fillStyle = "#70c5ce";
 		context.fillRect(0, 0, canvas.width, canvas.height);
-		
+
 		context.drawImage(
 			sprites,
 			this.spriteX,
@@ -295,16 +311,20 @@ function setPlayer() {
 		x: canvas.width / 2,
 		jump: 6,
 		up() {
-			soundPulo.play();
+			if(sound){
+				soundPulo.play();
+			}
 			this.aceleration = -this.jump;
 		},
 		y: canvas.height / 2 - 24,
-		weight: 0.29,
+		weight: 0.28,
 		aceleration: 0,
 		gravity() {
 			if (colliding(player, globals.ground)) {
-				soundHit.play();
-				changeScreen(screens.init);
+				if(sound){
+					soundHit.play();
+				}
+				changeScreen(screens.gameOver);
 				return;
 			}
 
@@ -339,8 +359,8 @@ function setPlayer() {
 				this.height,
 				this.x - this.width / 2,
 				this.y,
-				this.width *1.1,
-				this.height *1.1
+				this.width * 1.1,
+				this.height * 1.1
 			);
 		},
 	};
@@ -348,7 +368,7 @@ function setPlayer() {
 }
 function changeScreen(newScreen) {
 	activateScreen = newScreen;
-	
+
 	if (activateScreen.initializy) {
 		activateScreen.initializy();
 	}
@@ -378,17 +398,6 @@ const screens = {
 		},
 	},
 };
-screens.gameOver = {
-	initializy() {
-		globals.gameOver = setGameOver();
-	},
-	draw() {
-		globals.gameOver.draw();
-	},
-	click() {
-		changeScreen(screens.init);
-	},
-};
 screens.game = {
 	initializy() {
 		globals.pontuation = setPontuation();
@@ -407,6 +416,20 @@ screens.game = {
 		globals.pipe.actualize();
 		globals.player.gravity();
 		globals.ground.actualize();
+	},
+};
+screens.gameOver = {
+	initializy() {
+		globals.gameOver = setGameOver();
+	},
+	draw() {
+		globals.gameOver.draw();
+	},
+	actualize() {
+		globals.gameOver.draw();
+	},
+	click() {
+		changeScreen(screens.init);
 	},
 };
 
@@ -431,4 +454,3 @@ canvas.addEventListener("click", () => {
 
 changeScreen(screens.init);
 drawObjects();
-
