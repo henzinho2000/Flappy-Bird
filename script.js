@@ -45,6 +45,19 @@ function setPontuation() {
 	};
 	return pontuation;
 }
+function setVersion(){
+	const version = {
+		version: "v-1.211",
+		draw(x = 10, y = canvas.height-10, px = 20, fill = "grey") {
+			context.font = `${px}px Pixelify Sans`;
+			context.textAlign = "right";
+			context.fillStyle = fill;
+			context.fillText(this.version, canvas.width - x, y);
+		},
+	};
+	return version;
+}
+
 function setGameOver() {
 	const gameOver = {
 		spriteX: 134,
@@ -380,13 +393,13 @@ const screens = {
 			globals.player = setPlayer();
 			globals.ground = setGround();
 			globals.pipe = setPipe();
+			globals.version = setVersion();
 		},
 		draw() {
 			background.draw();
-
 			globals.ground.draw();
-
 			introduction.draw();
+			globals.version.draw();
 		},
 		click() {
 			changeScreen(screens.game);
@@ -408,6 +421,7 @@ screens.game = {
 		globals.ground.draw();
 		globals.player.draw();
 		globals.pontuation.draw();
+		globals.version.draw()
 	},
 	click() {
 		globals.player.up();
@@ -433,12 +447,24 @@ screens.gameOver = {
 	},
 };
 
-function drawObjects() {
-	activateScreen.draw();
-	activateScreen.actualize();
+let lastFrameTime = 0; // Guarda o último tempo de quadro
+const targetFPS = 70; // FPS desejado
+const frameInterval = 1000 / targetFPS; // Intervalo entre os quadros em milissegundos
 
-	frames++;
-	requestAnimationFrame(drawObjects);
+function drawObjects() {
+    const currentTime = performance.now(); // Tempo atual em milissegundos
+    const deltaTime = currentTime - lastFrameTime; // Diferença de tempo entre os quadros
+
+    if (deltaTime >= frameInterval) {
+        lastFrameTime = currentTime; // Atualiza o último tempo de quadro
+
+        activateScreen.draw();
+        activateScreen.actualize();
+		console.log(deltaTime);
+        frames++;
+    }
+
+    requestAnimationFrame(drawObjects);
 }
 
 window.addEventListener("keydown", () => {
